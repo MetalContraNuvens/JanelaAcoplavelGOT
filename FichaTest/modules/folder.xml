@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<script>
+	-- Concatena 2 arrays
+	table.concatArray = function(array1, array2)
+		local fusedArray = {};
+		local n=0;
+		for k,v in ipairs(array1) do n=n+1 ; fusedArray[n] = v end;
+		for k,v in ipairs(array2) do n=n+1 ; fusedArray[n] = v end;
+		return fusedArray;
+	end;
+
+	-- Split a string into a table using a delimiter and a limit
+	string.split = function(str, pat, limit)
+		local t = {}
+		local fpat = "(.-)" .. pat
+		local last_end = 1
+		local s, e, cap = str:find(fpat, 1)
+		while s do
+			if s ~= 1 or cap ~= "" then
+				table.insert(t, cap)
+			end
+			last_end = e+1
+			s, e, cap = str:find(fpat, last_end)
+			if limit ~= nil and #t > limit then
+				break
+			end
+		end
+		if #str > last_end then
+			cap = str:sub(last_end)
+			table.insert(t, cap)
+		end
+		return t
+	end
+
+	-- Pega todas as pastas do rrpg
+	local function folderGetFolders(folder, parent)
+		local ret = {};
+		ret[1] = {}; -- Nome
+		ret[2] = {}; -- codigo interno
+
+		if parent == nil then
+			parent = "";
+			if folder.nome == "Biblioteca" then
+				table.insert(ret[2], "/");
+			else
+				table.insert(ret[2], "/" .. folder.nome);
+			end;
+			table.insert(ret[1], folder.codigoInterno);
+		end;
+		local folderChilds = folder.filhos;
+		if folderChilds == nil then
+			return ret;
+		end;
+		local i;
+		for i = 1, #folderChilds, 1 do
+			local item = folderChilds[i];
+			if item.tipo == "diretorio" then
+				table.insert(ret[2], parent .. "/" .. item.nome);
+				table.insert(ret[1], item.codigoInterno);
+				local subDiretorios = folderGetFolders(item, parent .. "/" .. item.nome);
+				ret[1] = table.concatArray(ret[1], subDiretorios[1]);
+				ret[2] = table.concatArray(ret[2], subDiretorios[2]);
+			end;
+		end;
+		return ret;
+	end;
+
+	-- Pega todas as pastas do rrpg
+	local function folderGetItens(internalCode)
+		local ret = {};
+		ret[1] = {}; -- codigo interno
+		ret[2] = {}; -- nome da ficha sem o codigo
+		ret[3] = {}; -- informações da ficha
+
+		local minhaMesa = Firecast.getMesaDe(sheet);
+		local biblioteca = minhaMesa.biblioteca;
+		local folder = minhaMesa:findBibliotecaItem(internalCode);
+
+		local folderChilds = folder.filhos;
+		if folderChilds == nil then
+			return ret;
+		end;
+
+		local i;
+		for i = 1, #folderChilds, 1 do
+			local item = folderChilds[i];
+			if item.tipo == "personagem" then
+				local itemData = string.split(item.nome, "|")
+				if #itemData == 2 then
+					table.insert(ret[1], item.codigoInterno);
+					table.insert(ret[2], itemData[1]);
+					table.insert(ret[3], itemData[2]);
+				end;
+			end;
+		end;
+		return ret;
+	end;
+
+</script>

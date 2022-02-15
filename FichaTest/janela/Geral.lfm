@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<form name="frmAFichaTestJanelaAcoplavelGeral" align="client" margins="{top=1}" theme="dark">
+	<import file="../modules/folder.xml"/>
+	<event name="onNodeReady">
+		local minhaMesa = Firecast.getMesaDe(sheet);
+		local biblioteca = minhaMesa.biblioteca;
+		local result = folderGetFolders(biblioteca);
+		self.cbxSelectorFolders.items = result[1];
+		self.cbxSelectorFolders.values = result[2];
+	</event>
+
+	<!-- Botão de inserir novo item à lista -->
+	<layout align="top" height="30" margins="{bottom=4}">
+		<comboBox width="150" height="30" left="0" field="selectorFolders" name="cbxSelectorFolders" items="{'/'}" values="{'/'}" value="/">
+			<event name="onClick">
+					-- lua-start
+					local minhaMesa = Firecast.getMesaDe(sheet);
+					local biblioteca = minhaMesa.biblioteca;
+					local result = folderGetFolders(biblioteca);
+					self.cbxSelectorFolders.items = result[2];
+					self.cbxSelectorFolders.values = result[1];
+					-- lua-end
+			</event>
+			<event name="onChange">
+					local minhaMesa = Firecast.getMesaDe(sheet);
+					local chat = minhaMesa.chat;
+
+					local result = folderGetItens(self.cbxSelectorFolders.value);
+					local nodes = ndb.getChildNodes(sheet.selectorPlayers);
+					local exist = false;
+
+					for i = 1, #result[1], 1 do
+						-- Verifica se o elemento ja esta adicionado na lista
+						exist = false;
+						local j = 1;
+						for j = 1, #nodes, 1 do
+							local element = nodes[j];
+							if element.internalCodeSheet == result[1][i] then
+								exist = true;
+							end;
+						end;
+
+						-- adiciona elemento
+						if exist == false then
+							local newNode = self.rclSelectorPlayers:append();
+							newNode.internalCodeSheet = result[1][i];
+							newNode.nome = result[2][i];
+						end;
+					end;
+			</event>
+		</comboBox>
+	</layout>
+
+	<recordList name="rclSelectorPlayers" field="selectorPlayers" templateForm="frmItemDaLista" align="client" selectable="true" layout="vertical">
+		<event name="onSelect">
+			local node = self.rclSelectorPlayers.selectedNode;
+			self.itens.node = node;
+			self.itens.visible = (node ~= nil);
+		</event>
+		<event name="onEndEnumeration">
+			if self.rclSelectorPlayers.selectedNode == nil and sheet ~= nil then
+				local nodes = ndb.getChildNodes(sheet.selectorPlayers);
+				if #nodes > 0 then
+					self.rclSelectorPlayers.selectedNode = nodes[1];
+				end;
+			end;
+		</event>
+	</recordList>
+
+	<dataScopeBox name="itens" visible="false" align="right" width="300" margins="{left=4, right=4}">
+		<rectangle align="client" color="black" xradius="10" yradius="10">
+			<event name="OnStartDrop">
+				drop:addAction("ficha",
+					function(value)
+						self.itens.node.nome = value.nome
+						self.itens.node.compostura = value.compostura
+						self.itens.node.frustacao = value.frustacao
+						self.itens.node.fadiga = value.fadiga
+						self.itens.node.blefar = value.blefar
+						self.itens.node.atuar = value.atuar
+						self.itens.node.dedicar = value.dedicar
+						self.itens.node.coragem = value.coragem
+						self.itens.node.DI = value.DI
+						self.itens.node.postura = value.postura
+
+						if self.itens.node.composturaAtual == nil then
+							self.itens.node.composturaAtual = value.composturaAtual
+						end
+						if self.itens.node.frustacaoAtual == nil then
+							self.itens.node.frustacaoAtual = value.frustacaoAtual
+						end
+						if self.itens.node.fadigaAtual == nil then
+							self.itens.node.fadigaAtual = value.fadigaAtual
+						end
+
+						self.itens.node.blefarTemp = 0
+						self.itens.node.atuarTemp = 0
+						self.itens.node.dedicarTemp = 0
+						self.itens.node.coragemTemp = 0
+						self.itens.node.DITemp = 0
+					end);
+			</event>
+			<flowLayout left="5" top="5" width="160" autoHeight="true">
+				<edit type="text" width="160" vertTextAlign="center" field="nome"/>
+				<flowLineBreak/>
+				<label width="80" text="Compostura:"/>
+				<edit type="number" width="20" vertTextAlign="center" field="composturaAtual"/>
+				<label width="5" margins="{left=5}" text="/"/>
+				<label width="20" margins="{left=5}" field="compostura"/>
+				<flowLineBreak/>
+				<label width="80" text="Frustação:"/>
+				<edit type="number" width="20" vertTextAlign="center" field="frustacaoAtual"/>
+				<label width="5" margins="{left=5}" text="/"/>
+				<label width="20" margins="{left=5}" field="frustacao"/>
+				<flowLineBreak/>
+				<label width="80" text="Fadiga:"/>
+				<edit type="number" width="20" vertTextAlign="center" field="fadigaAtual"/>
+				<label width="5" margins="{left=5}" text="/"/>
+				<label width="20" margins="{left=5}" field="fadiga"/>
+				<flowLineBreak/>
+
+				<label width="80" text="Blefe Passivo:"/>
+				<label width="20" margins="{left=5}" vertTextAlign="center" field="blefar"/>
+				<edit type="number" width="20" vertTextAlign="center" field="blefarTemp">
+					<event name="OnChange">
+						if self.itens.node ~= nil and self.itens.node.blefarTemp ~= nil and self.itens.node.blefar ~= nil then
+							self.itens.node.blefarFinal = self.itens.node.blefar + self.itens.node.blefarTemp
+						end
+					</event>
+				</edit>
+				<label width="30" margins="{left=5}" field="blefarFinal"/>
+				<flowLineBreak/>
+
+				<label width="80" text="Atuação Passivo:"/>
+				<label width="20" margins="{left=5}" vertTextAlign="center" field="atuar"/>
+				<edit type="number" width="20" vertTextAlign="center" field="atuarTemp">
+					<event name="OnChange">
+						if self.itens.node ~= nil and self.itens.node.atuarTemp ~= nil and self.itens.node.atuar ~= nil then
+							self.itens.node.atuarFinal = self.itens.node.atuar + self.itens.node.atuarTemp
+						end
+					</event>
+				</edit>
+				<label width="30" margins="{left=5}" field="atuarFinal"/>
+				<flowLineBreak/>
+
+				<label width="80" text="Dedicação Passivo:"/>
+				<label width="20" margins="{left=5}" vertTextAlign="center" field="dedicar"/>
+				<edit type="number" width="20" vertTextAlign="center" field="dedicarTemp">
+					<event name="OnChange">
+						if self.itens.node ~= nil and self.itens.node.dedicarTemp ~= nil and self.itens.node.dedicar ~= nil then
+							self.itens.node.dedicarFinal = self.itens.node.dedicar + self.itens.node.dedicarTemp
+						end
+					</event>
+				</edit>
+				<label width="30" margins="{left=5}" field="dedicarFinal"/>
+				<flowLineBreak/>
+
+				<label width="80" text="Coragem Passivo:"/>
+				<label width="20" margins="{left=5}" vertTextAlign="center" field="coragem"/>
+				<edit type="number" width="20" vertTextAlign="center" field="coragemTemp">
+					<event name="OnChange">
+						if self.itens.node ~= nil and self.itens.node.coragemTemp ~= nil and self.itens.node.coragem ~= nil then
+							self.itens.node.coragemFinal = self.itens.node.coragem + self.itens.node.coragemTemp
+						end
+					</event>
+				</edit>
+				<label width="30" margins="{left=5}" field="coragemFinal"/>
+				<flowLineBreak/>
+
+				<label width="80" text="DI:"/>
+				<label width="20" margins="{left=5}" vertTextAlign="center" field="DI"/>
+				<edit type="number" width="20" vertTextAlign="center" field="DITemp">
+					<event name="OnChange">
+						if self.itens.node ~= nil and self.itens.node.DITemp ~= nil and self.itens.node.DI ~= nil then
+							self.itens.node.DIFinal = self.itens.node.DI + self.itens.node.DITemp
+						end
+					</event>
+				</edit>
+				<label width="30" margins="{left=5}" field="DIFinal"/>
+				<flowLineBreak/>
+				<label width="80" text="Postura:"/>
+				<comboBox width="80" items="{'Afetuoso', 'Amigável', 'Afável', 'Indiferente', 'Desgostosa', 'Inamistosa', 'Maliciosa'}" values="{'1', '2', '3', '4', '5', '6', '7'}" value="4"/>
+				<flowLineBreak/>
+			</flowLayout>
+
+			<flowLayout left="170" top="5" width="125" autoHeight="true">
+				<comboBox width="125" field="postura" items="{'Afetuoso', 'Amigável', 'Afável', 'Indiferente', 'Desgostosa', 'Inamistosa', 'Maliciosa'}" values="{'1', '2', '3', '4', '5', '6', '7'}" value="4"/>
+				<flowLineBreak/>
+				<button width="125" text="Iniciativa" />
+				<flowLineBreak/>
+				<button width="125" text="Influenciar">
+					<event name="OnClick">
+						local minhaMesa = Firecast.getMesaDe(sheet);
+						local chat = minhaMesa.chat;
+						chat:enviarMensagem("Teste contra")
+					</event>
+				</button>
+				<flowLineBreak/>
+				<button width="125" text="Apaziguar" />
+				<flowLineBreak/>
+				<button width="125" text="Auxiliar" />
+				<flowLineBreak/>
+				<button width="125" text="Rebater" />
+				<flowLineBreak/>
+				<button width="125" text="Manipular" />
+				<flowLineBreak/>
+				<button width="125" text="Reputação" />
+				<flowLineBreak/>
+				<button width="125" text="Criação" />
+				<flowLineBreak/>
+				<button width="125" text="Memoria" />
+				<flowLineBreak/>
+				<button width="125" text="Ler o Alvo" />
+				<flowLineBreak/>
+				<button width="125" text="Tagarelar">
+					<event name="onClick">
+						-- lua-start
+						local minhaMesa = Firecast.getMesaDe(sheet);
+						local chat = minhaMesa.chat;
+						local result = folderGetFolders(biblioteca);
+						self.cbxSelectorFolders.items = result[2];
+						self.cbxSelectorFolders.values = result[1];
+						-- lua-end
+					</event>
+				</button>
+				<flowLineBreak/>
+			</flowLayout>
+
+		</rectangle>
+	</dataScopeBox>
+</form>

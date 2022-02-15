@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<form name="frmAFichaTest" formType="sheetTemplate" dataType="com.travelrpg.fichatest" title="A Ficha Test" align="client" theme="dark">
+	<tabControl align="client">
+		<tab title="Geral">
+			<import file="ficha/Geral.lfm"/>
+		</tab>
+		<tab title="Notas">
+		</tab>
+	</tabControl>
+</form>

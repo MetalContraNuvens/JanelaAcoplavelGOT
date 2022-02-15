@@ -1,0 +1,21 @@
+{
+	"search.exclude": {
+		"**/.sdk": true,
+		"**/output": true
+	},
+	"emeraldwalk.runonsave": {
+		"commands": [
+			{
+				"match": "\\.lfm$",
+				"cmd": "rdk i"
+			},
+			{
+				"match": "\\.xml$",
+				"cmd": "rdk i"
+			},
+		]
+	},
+	"files.associations": {
+		"*.lfm": "xml"
+	}
+}

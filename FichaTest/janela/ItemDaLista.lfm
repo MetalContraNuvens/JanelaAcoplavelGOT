@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<form name="frmItemDaLista" height="20">
+	<layout align="client" margins="{left=4, right=4, top=4, bottom=4}">
+		<button align="left" width="20" text="X" onClick="NDB.deleteNode(sheet);"/>
+		<!-- Botão para apagar o item da lista -->
+		<!-- O título do item que aparece na lista -->
+		<label align="client" text="Teste de label" field="nome" margins="{left=4}"/>
+		<!-- <dataLink field="nome" defaultValue="Titulo Aqui"/> -->
+	</layout>
+</form>
