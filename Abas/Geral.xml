@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<group>
+	<script>
+		function self:obterNomesRecursivo(bibItem)
+			local itensFilhos = bibItem.filhos;
+			local nomes = bibItem.nome;
+			for i = 1, #itensFilhos, 1 do
+					local bibItemFilho = itensFilhos[i];
+					local nomesDoFilho = self:obterNomesRecursivo(bibItemFilho);       
+					if nomesDoFilho then
+						nomes = nomes .. "\n" .. nomesDoFilho;
+					end;
+			end;
+			return nomes;
+		end; 
+		function self:getBibItems(node)
+			local mesa = Firecast.getMesaDe(node);
+			if not mesa then return; end;
+			local bibItem = mesa.biblioteca;
+			if bibItem and bibItem.filhos then
+				local nomesFilhos = {};
+				--node.bibItems = {};
+				for i = 1, #bibItem.filhos, 1 do
+					--table.insert(node.bibItems, bibItem.filhos[i]);
+					table.insert(nomesFilhos, bibItem.filhos[i].nome);
+				end;
+				return nomesFilhos;
+			end;
+		end;
+		function self:updateNavegacao(node)
+			if node then
+				local items = self:getBibItems(node);
+				if items then
+					self.cbxNavegacao.items  = items;
+					self.cbxNavegacao.values = items;
+				end;
+				self.rclListaDePersonagens:sort();
+			end;
+		end;
+	</script>
+	<layout align="top" height="30" margins="{bottom=4}">
+		<comboBox name="cbxNavegacao" width="150" align="left" field="navegacao" items="{'Raiz'}" onChange="self:updateNavegacao(sheet)"/>
+	</layout>
+
+	<recordList name="rclListaDePersonagens" field="personagens" templateForm="frmItemPersonagem" 
+				align="left" width="250" selectable="true" layout="vertical">
+		<event name="onSelect">
+			local node = self.rclListaDePersonagens.selectedNode;
+			self.boxPersonagen.node = node;
+			self.boxPersonagen.visible = (node ~= nil);
+		</event>
+		<event name="onItemAdded">
+			self.rclListaDePersonagens.selectedNode = node;
+			self.rclListaDePersonagens:sort();
+		</event>
+		<event name="onCompare">
+			return Utils.compareStringPtBr(nodeA.nome, nodeB.nome);
+		</event>
+	</recordList>
+
+	<dataScopeBox name="boxPersonagen" visible="false" align="client" margins="{left=2, right=2}">
+		<tabControl top="0" left="0" width="880" height="750">
+			<tab title="Personagem">
+			</tab>
+		</tabControl>
+	</dataScopeBox>
+</group>

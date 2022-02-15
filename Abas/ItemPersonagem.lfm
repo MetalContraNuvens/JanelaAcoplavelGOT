@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<form name="frmItemPersonagem" height="20">
+	<layout align="client" margins="{left=4, right=4, top=4, bottom=4}">
+        <button name="btnDelItem" align="left" width="28" text="X" onClick="self.popConfirmDelItem:show('bottom', self.btnDelItem);"/>      
+        <popup name="popConfirmDelItem" width="120" height="53" drawContainer="true" backOpacity="0.5">
+            <button align="top" text="Apagar da Lista" onClick="NDB.deleteNode(sheet);self.popConfirmDelItem:close();"/>
+            <button align="top" text="Não Apagar" onClick="self.popConfirmDelItem:close();"/>
+        </popup>
+		<label align="client" text="Teste de label" field="nome" margins="{left=4}"/>
+	</layout>
+</form>
