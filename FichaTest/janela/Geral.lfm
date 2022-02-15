@@ -11,7 +11,7 @@
 
 	<!-- Botão de inserir novo item à lista -->
 	<layout align="top" height="30" margins="{bottom=4}">
-		<comboBox width="150" height="30" left="0" field="selectorFolders" name="cbxSelectorFolders" items="{'/'}" values="{'/'}" value="/">
+		<comboBox align="client" field="selectorFolders" name="cbxSelectorFolders" items="{'/'}" values="{'/'}" value="/">
 			<event name="onClick">
 					-- lua-start
 					local minhaMesa = Firecast.getMesaDe(sheet);
