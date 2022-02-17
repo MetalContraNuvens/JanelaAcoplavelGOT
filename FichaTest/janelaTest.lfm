@@ -3,7 +3,7 @@
 <form name="frmAFichaTestJanelaAcoplavel" formType="tablesDock" dataType="com.travelrpg.fichatest.janelaAcoplavel" title="A Ficha Test Janela Acoplavel" align="client" theme="dark">
 	<tabControl align="client">
 		<tab title="Geral">
-			<import file="janela/Geral.lfm"/>
+			<import file="janela/Geral.xml"/>
 		</tab>
 		<tab title="Notas">
 		</tab>

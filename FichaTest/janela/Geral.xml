@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<form name="frmAFichaTestJanelaAcoplavelGeral" align="client" margins="{top=1}" theme="dark">
+<group>
 	<import file="../modules/folder.xml"/>
 	<event name="onNodeReady">
 		local minhaMesa = Firecast.getMesaDe(sheet);
@@ -228,4 +228,4 @@
 
 		</rectangle>
 	</dataScopeBox>
-</form>
+</group>

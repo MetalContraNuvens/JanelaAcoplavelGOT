@@ -3,9 +3,9 @@
 <form name="frmAFichaTest" formType="sheetTemplate" dataType="com.travelrpg.fichatest" title="A Ficha Test" align="client" theme="dark">
 	<tabControl align="client">
 		<tab title="Geral">
-			<import file="ficha/Geral.lfm"/>
+			<import file="ficha/Geral.xml"/>
 		</tab>
 		<tab title="Notas">
-		</tab>
+		</tab> 
 	</tabControl>
 </form>
