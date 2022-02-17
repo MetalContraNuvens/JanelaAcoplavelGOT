@@ -1,8 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <form name="frmItemDaLista" height="20">
 	<layout align="client" margins="{left=4, right=4, top=4, bottom=4}">
-		<button align="left" width="20" text="X" onClick="NDB.deleteNode(sheet);"/>
-		<!-- Botão para apagar o item da lista -->
+		<button name="btnDel" align="left" width="20" text="X" onClick="self.popConfirmDel:show('bottom', self.btnDel);"/>            
+        
+        <popup name="popConfirmDel" width="120" height="53" drawContainer="true" backOpacity="0.5">
+            <button align="top" text="Remover" onClick="NDB.deleteNode(sheet);self.popConfirmDel:close();"/>
+            <button align="top" text="Não Remover" onClick="self.popConfirmDel:close();"/>
+        </popup>
 		<!-- O título do item que aparece na lista -->
 		<label align="client" text="Teste de label" field="nome" margins="{left=4}"/>
 		<!-- <dataLink field="nome" defaultValue="Titulo Aqui"/> -->
