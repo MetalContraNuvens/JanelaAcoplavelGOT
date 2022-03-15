@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<form name="frmAFichaTestJanelaAcoplavel" formType="tablesDock" dataType="com.travelrpg.fichatest.janelaAcoplavel" title="A Ficha Test Janela Acoplavel" align="client" theme="dark">
+<form name="frmJanelaGdtMCN" formType="tablesDock" dataType="com.travelrpg.fichatest.janelaAcoplavel" title="Janela GdT MCN" align="client" theme="dark">
 	<tabControl align="client">
 		<tab title="Geral">
 			<import file="janela/Geral.xml"/>

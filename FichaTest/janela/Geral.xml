@@ -2,51 +2,34 @@
 <group>
 	<import file="../modules/folder.xml"/>
 	<event name="onNodeReady">
-		local minhaMesa = Firecast.getMesaDe(sheet);
-		local biblioteca = minhaMesa.biblioteca;
-		local result = folderGetFolders(biblioteca);
-		self.cbxSelectorFolders.items = result[1];
-		self.cbxSelectorFolders.values = result[2];
+		local folders = folderGetFolders();
+		self.cbxSelectorFolders.items = folders[2];
+		self.cbxSelectorFolders.values = folders[1];
 	</event>
 
 	<!-- Botão de inserir novo item à lista -->
 	<layout align="top" height="30" margins="{bottom=4}">
 		<comboBox align="client" field="selectorFolders" name="cbxSelectorFolders" items="{'/'}" values="{'/'}" value="/">
 			<event name="onClick">
-					-- lua-start
-					local minhaMesa = Firecast.getMesaDe(sheet);
-					local biblioteca = minhaMesa.biblioteca;
-					local result = folderGetFolders(biblioteca);
-					self.cbxSelectorFolders.items = result[2];
-					self.cbxSelectorFolders.values = result[1];
-					-- lua-end
+				local folders = folderGetFolders();
+				self.cbxSelectorFolders.items = folders[2];
+				self.cbxSelectorFolders.values = folders[1];
 			</event>
 			<event name="onChange">
-					local minhaMesa = Firecast.getMesaDe(sheet);
-					local chat = minhaMesa.chat;
+				local folders = folderGetItens(self.cbxSelectorFolders.value);
+				local nodes = NDB.getChildNodes(sheet.selectorPlayers);
 
-					local result = folderGetItens(self.cbxSelectorFolders.value);
-					local nodes = ndb.getChildNodes(sheet.selectorPlayers);
-					local exist = false;
-
-					for i = 1, #result[1], 1 do
-						-- Verifica se o elemento ja esta adicionado na lista
-						exist = false;
-						local j = 1;
-						for j = 1, #nodes, 1 do
-							local element = nodes[j];
-							if element.internalCodeSheet == result[1][i] then
-								exist = true;
-							end;
-						end;
-
-						-- adiciona elemento
-						if exist == false then
+				for i = 1, #folders[1], 1 do
+					-- Verifica se o elemento ja esta adicionado na lista
+					for j = 1, #nodes, 1 do
+						if nodes[j].internalCodeSheet == folders[1][i] then
+							-- adiciona elemento
 							local newNode = self.rclSelectorPlayers:append();
-							newNode.internalCodeSheet = result[1][i];
-							newNode.nome = result[2][i];
+							newNode.internalCodeSheet = folders[1][i];
+							newNode.nome = folders[2][i];
 						end;
 					end;
+				end;
 			</event>
 		</comboBox>
 	</layout>
@@ -59,7 +42,7 @@
 		</event>
 		<event name="onEndEnumeration">
 			if self.rclSelectorPlayers.selectedNode == nil and sheet ~= nil then
-				local nodes = ndb.getChildNodes(sheet.selectorPlayers);
+				local nodes = NDB.getChildNodes(sheet.selectorPlayers);
 				if #nodes > 0 then
 					self.rclSelectorPlayers.selectedNode = nodes[1];
 				end;
@@ -191,8 +174,7 @@
 				<button width="125" text="Influenciar">
 					<event name="OnClick">
 						local minhaMesa = Firecast.getMesaDe(sheet);
-						local chat = minhaMesa.chat;
-						chat:enviarMensagem("Teste contra")
+						minhaMesa.chat:enviarMensagem("Teste contra")
 					</event>
 				</button>
 				<flowLineBreak/>
@@ -214,13 +196,9 @@
 				<flowLineBreak/>
 				<button width="125" text="Tagarelar">
 					<event name="onClick">
-						-- lua-start
-						local minhaMesa = Firecast.getMesaDe(sheet);
-						local chat = minhaMesa.chat;
-						local result = folderGetFolders(biblioteca);
-						self.cbxSelectorFolders.items = result[2];
-						self.cbxSelectorFolders.values = result[1];
-						-- lua-end
+						local folders = folderGetFolders();
+						self.cbxSelectorFolders.items = folders[2];
+						self.cbxSelectorFolders.values = folders[1];
 					</event>
 				</button>
 				<flowLineBreak/>

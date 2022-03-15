@@ -36,12 +36,11 @@
 	<button left="120" top="30" width="65" height="25" text="ENVIAR">
 		<event name="onClick">
 			local minhaMesa = Firecast.getMesaDe(sheet);
-			local chat = minhaMesa.chat;
 
 			if minhaMesa.meuJogador.isMestre then
-				chat:enviarMensagemNPC(sheet.nome, sheet.codigoEntrada);
+				minhaMesa.chat:enviarMensagemNPC(sheet.nome, sheet.codigoEntrada);
 			else
-				chat:enviarMensagem(sheet.codigoEntrada);
+				minhaMesa.chat:enviarMensagem(sheet.codigoEntrada);
 			end;
 		</event>
 	</button>

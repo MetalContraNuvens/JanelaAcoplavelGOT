@@ -1,10 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <script>
+	
+	table.contains = function(table, val)
+		for i=1,#table do
+			if table[i] == val then 
+				return true
+			end
+		end
+		return false
+	end;
+
 	-- Concatena 2 arrays
 	table.concatArray = function(array1, array2)
-		local fusedArray = {};
+		local fusedArray = array1;
 		local n=0;
-		for k,v in ipairs(array1) do n=n+1 ; fusedArray[n] = v end;
 		for k,v in ipairs(array2) do n=n+1 ; fusedArray[n] = v end;
 		return fusedArray;
 	end;
@@ -30,70 +39,57 @@
 			table.insert(t, cap)
 		end
 		return t
-	end
-
-	-- Pega todas as pastas do rrpg
-	local function folderGetFolders(folder, parent)
-		local ret = {};
-		ret[1] = {}; -- Nome
-		ret[2] = {}; -- codigo interno
-
-		if parent == nil then
-			parent = "";
-			if folder.nome == "Biblioteca" then
-				table.insert(ret[2], "/");
-			else
-				table.insert(ret[2], "/" .. folder.nome);
-			end;
-			table.insert(ret[1], folder.codigoInterno);
-		end;
-		local folderChilds = folder.filhos;
-		if folderChilds == nil then
-			return ret;
-		end;
-		local i;
-		for i = 1, #folderChilds, 1 do
-			local item = folderChilds[i];
-			if item.tipo == "diretorio" then
-				table.insert(ret[2], parent .. "/" .. item.nome);
-				table.insert(ret[1], item.codigoInterno);
-				local subDiretorios = folderGetFolders(item, parent .. "/" .. item.nome);
-				ret[1] = table.concatArray(ret[1], subDiretorios[1]);
-				ret[2] = table.concatArray(ret[2], subDiretorios[2]);
-			end;
-		end;
-		return ret;
 	end;
 
 	-- Pega todas as pastas do rrpg
-	local function folderGetItens(internalCode)
-		local ret = {};
-		ret[1] = {}; -- codigo interno
-		ret[2] = {}; -- nome da ficha sem o codigo
-		ret[3] = {}; -- informações da ficha
-
+	function folderGetItens(internalCode)
 		local minhaMesa = Firecast.getMesaDe(sheet);
-		local biblioteca = minhaMesa.biblioteca;
 		local folder = minhaMesa:findBibliotecaItem(internalCode);
-
-		local folderChilds = folder.filhos;
-		if folderChilds == nil then
-			return ret;
+		if not folder or not folder.filhos then
+			return;
 		end;
+		local lista = {};
+		lista[1] = {}; -- codigo interno
+		lista[2] = {}; -- nome da ficha sem o codigo
+		lista[3] = {}; -- informações da ficha
 
-		local i;
-		for i = 1, #folderChilds, 1 do
-			local item = folderChilds[i];
-			if item.tipo == "personagem" then
-				local itemData = string.split(item.nome, "|")
+		for i = 1, #folder.filhos, 1 do
+			if folder.filhos[i].tipo == "personagem" then
+				local itemData = string.split(folder.filhos[i].nome, "|")
 				if #itemData == 2 then
-					table.insert(ret[1], item.codigoInterno);
-					table.insert(ret[2], itemData[1]);
-					table.insert(ret[3], itemData[2]);
+					table.insert(lista[1], folder.filhos[i].codigoInterno);
+					table.insert(lista[2], itemData[1]);
+					table.insert(lista[3], itemData[2]);
 				end;
 			end;
 		end;
-		return ret;
+		return lista;
+	end;
+
+	-- Pega todas as pastas do rrpg
+	function folderGetFolders(folder, parent)
+		if not folder or not folder.filhos then
+			local minhaMesa = Firecast.getMesaDe(sheet);
+			folder = minhaMesa.biblioteca;
+			return folderGetFolders(folder);
+		end;
+		local lista = {};
+		lista[1] = {}; -- Nome
+		lista[2] = {}; -- codigo interno
+		for i = 1, #folder.filhos, 1 do
+			local item = folder.filhos[i];
+			local parentName = (parent or '') .. "/" .. item.nome;
+			if item.tipo == "diretorio" and parentName:find('PCs') then
+				if true or folderGetItens(parentName) then
+					table.insert(lista[2], parentName);
+					table.insert(lista[1], item.codigoInterno);
+					local subDiretorios = folderGetFolders(item, parentName);
+					lista[1] = table.concatArray(lista[1], subDiretorios[1]);
+					lista[2] = table.concatArray(lista[2], subDiretorios[2]);
+				end;
+			end;
+		end;
+		return lista;
 	end;
 
 </script>
