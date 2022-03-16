@@ -3,8 +3,8 @@
 	<import file="../modules/folder.xml"/>
 	<event name="onNodeReady">
 		local folders = folderGetFolders();
-		self.cbxSelectorFolders.items = folders[2];
-		self.cbxSelectorFolders.values = folders[1];
+		self.cbxSelectorFolders.items = folders[1];
+		self.cbxSelectorFolders.values = folders[2];
 	</event>
 
 	<!-- Botão de inserir novo item à lista -->
@@ -12,8 +12,8 @@
 		<comboBox align="client" field="selectorFolders" name="cbxSelectorFolders" items="{'/'}" values="{'/'}" value="/">
 			<event name="onClick">
 				local folders = folderGetFolders();
-				self.cbxSelectorFolders.items = folders[2];
-				self.cbxSelectorFolders.values = folders[1];
+				self.cbxSelectorFolders.items = folders[1];
+				self.cbxSelectorFolders.values = folders[2];
 			</event>
 			<event name="onChange">
 				local folders = folderGetItens(self.cbxSelectorFolders.value);
@@ -197,8 +197,8 @@
 				<button width="125" text="Tagarelar">
 					<event name="onClick">
 						local folders = folderGetFolders();
-						self.cbxSelectorFolders.items = folders[2];
-						self.cbxSelectorFolders.values = folders[1];
+						self.cbxSelectorFolders.items = folders[1];
+						self.cbxSelectorFolders.values = folders[2];
 					</event>
 				</button>
 				<flowLineBreak/>

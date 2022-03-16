@@ -3,7 +3,7 @@
 	
 	table.contains = function(table, val)
 		for i=1,#table do
-			if table[i] == val then 
+			if table[i] == val or table[i]:find(val) then 
 				return true
 			end
 		end
@@ -12,8 +12,9 @@
 
 	-- Concatena 2 arrays
 	table.concatArray = function(array1, array2)
-		local fusedArray = array1;
+		local fusedArray = {};
 		local n=0;
+		for k,v in ipairs(array1) do n=n+1 ; fusedArray[n] = v end;
 		for k,v in ipairs(array2) do n=n+1 ; fusedArray[n] = v end;
 		return fusedArray;
 	end;
@@ -70,26 +71,29 @@
 	function folderGetFolders(folder, parent)
 		if not folder or not folder.filhos then
 			local minhaMesa = Firecast.getMesaDe(sheet);
-			folder = minhaMesa.biblioteca;
-			return folderGetFolders(folder);
+			return folderGetFolders(minhaMesa.biblioteca);
 		end;
 		local lista = {};
 		lista[1] = {}; -- Nome
 		lista[2] = {}; -- codigo interno
 		for i = 1, #folder.filhos, 1 do
-			local item = folder.filhos[i];
-			local parentName = (parent or '') .. "/" .. item.nome;
-			if item.tipo == "diretorio" and parentName:find('PCs') then
-				if true or folderGetItens(parentName) then
-					table.insert(lista[2], parentName);
-					table.insert(lista[1], item.codigoInterno);
-					local subDiretorios = folderGetFolders(item, parentName);
-					lista[1] = table.concatArray(lista[1], subDiretorios[1]);
-					lista[2] = table.concatArray(lista[2], subDiretorios[2]);
-				end;
+			local parentName = (parent or '') .. "/" .. folder.filhos[i].nome;
+			if parentName:find('PCs') and folder.filhos[i].tipo == "personagem" then
+				table.insert(lista[1], parentName);
+				table.insert(lista[2], folder.filhos[i].codigoInterno);
+			end;
+			if parentName:find('PCs') and folder.filhos[i].tipo == "diretorio" then
+				local subDiretorios = folderGetFolders(folder.filhos[i], parentName);
+				lista[1] = table.concatArray(lista[1], subDiretorios[1]);
+				lista[2] = table.concatArray(lista[2], subDiretorios[2]);
 			end;
 		end;
 		return lista;
+	end;
+
+	function getFilhosItemBiBli(item)
+		local filhos = {};
+
 	end;
 
 </script>
